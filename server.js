@@ -58,8 +58,11 @@ io.on('connection',(socket)=>{
     socket.on("process-video",async(data)=>{
         console.log("Processing Video...")
         recordedChunks=[]
-        fs.readFile('temp_upload/'+data.filename,async(err,buffer)=>{
-            const processing=await axios.post(`${process.env.NEXT_API_HOST}recording/${data.userId}/processing`);
+        fs.readFile('temp_upload/'+data.filename,async(err,file)=>{
+            console.log("printing the dataId:"+data.userId)
+            const processing=await axios.post(`${process.env.NEXT_API_HOST}recording/${data.userId}/processing`,
+                {filename:data.filename}
+            );
             if(processing.data.status!==200){
                 return console.log('Error:Something went wrong with creating the processing file');
             }
@@ -81,7 +84,7 @@ io.on('connection',(socket)=>{
                         response_format:'text'
                     })
                     if(transcription){
-                        const completion=await openai.chat.completion.create({
+                        const completion=await openai.chat.completions.create({
                             model:'gpt-3.5-turbo',
                             response_format:{type:'json_object'},
                             messages:[
@@ -91,11 +94,14 @@ io.on('connection',(socket)=>{
                                 }
                             ]
                         })
+                        console.log(completion.choices[0].message.content)
                         const titleAndSummaryGenerated=await axios.post(`${process.env.NEXT_API_HOST}recording/${data.userId}/transcribe`,{
                             filename:data.filename,
                             content:completion.choices[0].message.content,
                             transcript:transcription
                         })
+                        console.log("hello")
+                        console.log(titleAndSummaryGenerated)
                         if(titleAndSummaryGenerated.data.status!==200){
                             console.log("Something went wrong when creating the title and description");
 
