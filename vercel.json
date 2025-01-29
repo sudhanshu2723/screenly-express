@@ -1,0 +1,25 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "server.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "server.js"
+      }
+    ],
+    "env": {
+      "OPEN_AI_KEY": "@open_ai_key",
+      "ELECTRON_HOST": "@electron_host",
+      "BUCKET_REGION": "@bucket_region",
+      "ACCESS_KEY": "@access_key",
+      "SECRET_KEY": "@secret_key",
+      "BUCKET_NAME": "@bucket_name",
+      "NEXT_API_HOST": "@next_api_host"
+    }
+  }
+  
